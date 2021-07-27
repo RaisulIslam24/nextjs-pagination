@@ -1,1 +1,1 @@
-## Nextjs Pagination
+## NextJs Pagination
