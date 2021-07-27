@@ -1,65 +1,38 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useRouter } from 'next/router'
 
-export default function Home() {
+const Home = ({ posts, page }) => {
+  const router = useRouter()
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+    <div>
+      <h1>Posts</h1>
+      <ul>
+        {
+          posts.map(post => (
+            <li key={post.id}>
+              <h3>{post.title}</h3>
+            </li>
+          ))
+        }
+      </ul>
+      <button onClick={() => router.push(page > 1 ? `?_page=${page - 1}&_limit=10` : `?_page=${page}&_limit=10`)}>Previous</button>
+      <button onClick={() => router.push(`?_page=${page + 1}&_limit=10`)}>Next</button>
     </div>
   )
 }
+
+Home.getInitialProps = async (ctx) => {
+  const { query: { _page = null } } = ctx;
+  let pageNumber = _page
+  const API_URL = 'https://jsonplaceholder.typicode.com/posts';
+  if(pageNumber == null ){
+    pageNumber = 1;
+  }
+  const res = await fetch(`${API_URL}?_page=${pageNumber}&_limit=10`);
+  const data = await res.json();
+  return {
+    posts: data,
+    page: +pageNumber
+  };
+}
+
+export default Home;
