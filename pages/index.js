@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const Home = ({ posts, page }) => {
   const router = useRouter()
@@ -8,9 +9,9 @@ const Home = ({ posts, page }) => {
       <ul>
         {
           posts.map(post => (
-            <li key={post.id}>
-              <h3>{post.title}</h3>
-            </li>
+            <Link href={'/posts/' + post.id} key={post.id}>
+              <h3 style={{border: '2px solid darkblue', borderRadius: '10px', margin: '18px', padding: '5px', backgroundColor: 'whiteSmoke', cursor: 'pointer'}}>{post.title}</h3>
+            </Link>
           ))
         }
       </ul>
